@@ -4,6 +4,13 @@ const cozy = require('./cozyclient')
 const log = require('./logger').namespace('BaseKonnector')
 const Secret = require('./Secret')
 
+const sleep = ms => {
+  var date = new Date()
+  var curDate = null
+  do { curDate = new Date() }
+  while (curDate - date < ms)
+}
+
 /**
  * @class
  * The class from which all the connectors must inherit.

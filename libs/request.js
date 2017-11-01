@@ -47,6 +47,7 @@ module.exports = function (options = {}) {
       'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:36.0) ' +
                     'Gecko/20100101 Firefox/36.0'
     },
+    // Why changing the default configuration of request ?
     followAllRedirects: true
   }
 
@@ -54,19 +55,12 @@ module.exports = function (options = {}) {
 
   if (options.debug) requestdebug(request)
 
-  const requestOptions = {}
-
-  requestOptions.json = options.json
-  requestOptions.jar = options.jar
-  requestOptions.headers = options.headers
-  requestOptions.followAllRedirects = options.followAllRedirects
-  requestOptions.strictSSL = options.strictSSL
-
   if (options.cheerio) {
-    requestOptions.transform = function (body, response, resolveWithFullResponse) {
-      let result = require('cheerio').load(body)
+    options.transform = function (body, response) {
+      // memory issues https://github.com/cheeriojs/cheerio/issues/830
+      let result = require('cheerio').load(response.body)
 
-      if (resolveWithFullResponse === true) {
+      if (options.resolveWithFullResponse) {
         response.body = result
         result = response
       }
@@ -74,18 +68,18 @@ module.exports = function (options = {}) {
       return result
     }
   } else {
-    requestOptions.transform = function (body, response, resolveWithFullResponse) {
+    options.transform = function (body, response) {
       let result = body
-      if (resolveWithFullResponse === true) {
+      if (options.resolveWithFullResponse) {
         result = response
       }
       return result
     }
   }
 
-  request = request.defaults(requestOptions)
+  request = request.defaults(options)
 
-  log('debug', requestOptions, 'Getting a new request instance with the following options')
+  log('debug', options, 'Getting a new request instance with the following options')
 
   return request
 }
