@@ -1,4 +1,24 @@
-# Konnector History
+# Konnector synchronized data (or Sync Data)
+
+## Problems
+
+Except bank konnector which already solve the addressed problem, all konnectors are currently processing data they are collecting in the same way:
+
+* Get all data to synchronize
+* Store it in CouchDB, even if it means overriding previously synchronized data.
+
+This process has at least two major flows :
+* We are always synchronizing _all_ the data provided by the external service.
+* When something is modified (for example, the name of the stored file, its almost sure that the previous one will be kept and that we'll have a duplicate)
+
+Another side effect could be that in a very large set of documents to synchronize, the whole process may take more than 3 minutes and never synchronize documents at the end of the list.
+
+## Objectives of this document
+
+*
+
+The goal of sync data is to be able to store
+
 
 This document describes how Cozy recommends to handle konnectors history.
 
